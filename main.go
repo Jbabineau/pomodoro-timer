@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"net/http"
+	"strings"
 
 	"github.com/jbabineau/pomodoro-timer/templates"
 )
@@ -10,7 +11,7 @@ import (
 func main() {
 
 	http.HandleFunc("/ping", pingHandler)
-	http.HandleFunc("/hello", helloHandler)
+	http.HandleFunc("/hello/", helloHandler)
 
 	log.Println("Server Started and listening on :8181")
 	log.Fatal(http.ListenAndServe(":8181", nil))
@@ -23,8 +24,12 @@ func pingHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func helloHandler(w http.ResponseWriter, r *http.Request) {
+	name := strings.TrimPrefix(r.URL.Path, "/hello/")
+	if name == "" {
+		name = "world"
+	}
 
-	page := templates.Index("world")
+	page := templates.Index(name)
 
 	err := page.Render(r.Context(), w)
 
