@@ -14,8 +14,8 @@ func main() {
 	http.HandleFunc("/hello/", helloHandler)
 	http.HandleFunc("/", indexHandler)
 
-	log.Println("Server Started and listening on :8181")
-	log.Fatal(http.ListenAndServe(":8181", nil))
+	log.Println("Server Started and listening on :8080")
+	log.Fatal(http.ListenAndServe(":8080", nil))
 }
 
 func pingHandler(w http.ResponseWriter, r *http.Request) {
