@@ -1,0 +1,87 @@
+
+package templates
+
+import (
+    
+)
+
+script setDuration( duration int) {
+    this.duration = duration;
+    this.orignalDuration = duration;
+}
+
+templ pomodoro(name string, duration int) {
+    <div class="timer">
+        <h3>{ name }</h3>
+        <span id="timer-display"></span>
+        <div class="timer-controls">
+            <button id="start-timer">Start</button>
+            <button id="stop-timer" style="display: none;">Stop</button>
+            <button id="cancel-timer">Cancel</button>
+        </div>
+    </div>
+
+    @setDuration(duration)
+
+    <script>
+        let timerInterval;
+        let endTime;
+        const timerDisplay = document.getElementById('timer-display');
+        const startButton = document.getElementById('start-timer');
+        const stopButton = document.getElementById('stop-timer');
+        const cancelButton = document.getElementById('cancel-timer');
+
+        function startTimer() {
+            endTime = Date.now() + duration * 1000;
+            timerInterval = setInterval(updateTimer, 10);
+            startButton.style.display = 'none';
+            stopButton.style.display = 'inline';
+        }
+
+        function stopTimer() {
+            duration = (endTime - Date.now()) / 1000;
+            clearInterval(timerInterval);
+            startButton.style.display = 'inline';
+            stopButton.style.display = 'none';
+        }
+
+        function cancelTimer() {
+            clearInterval(timerInterval);
+            timerDisplay.textContent = formatTime(orignalDuration * 1000);
+            startButton.style.display = 'inline';
+            stopButton.style.display = 'none';
+        }
+
+        function updateTimer() {
+            console.log("updating")
+            const remainingTime = endTime - Date.now();
+            if (remainingTime <= 0) {
+                clearInterval(timerInterval);
+                timerDisplay.textContent = '00:00:00';
+                startButton.style.display = 'inline';
+                stopButton.style.display = 'none';
+            } else {
+                timerDisplay.textContent = formatTime(remainingTime);
+            }
+        }
+
+        function formatTime(remainingTime) {
+            const seconds = Math.floor(remainingTime / 1000);
+            const minutes = Math.floor(seconds / 60);
+            const hours = Math.floor(minutes / 60);
+            const remainingSeconds = seconds % 60;
+            const remainingMinutes = minutes % 60;
+            return `${padZero(hours)}:${padZero(remainingMinutes)}:${padZero(remainingSeconds)}`;
+        }
+
+        function padZero(value) {
+            return value.toString().padStart(2, '0');
+        }
+
+        startButton.addEventListener('click', startTimer);
+        stopButton.addEventListener('click', stopTimer);
+        cancelButton.addEventListener('click', cancelTimer);
+        console.log(duration)
+        timerDisplay.textContent = formatTime(duration*1000)
+    </script>
+}
